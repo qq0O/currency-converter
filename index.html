@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Valutaátváltó – Schweizerhof Hotel St. Moritz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #F3F2F1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        #splash {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 60px;
+            animation: fadeOut 1s ease 1s forwards;
+        }
+        #main {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+        .euro {
+            display: inline-block;
+            animation: rotate 1s linear;
+        }
+        input[type="text"] {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px;
+            width: 90%;
+            max-width: 320px;
+        }
+        button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 10px;
+            background: #0078D7; color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffffff;
+            border: 2px solid #0078D7;
+            display: inline-block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0078D7;
+        }
+        .lang-buttons {
+            margin-top: 30px;
+        }
+        .lang-buttons button {
+            margin: 3px;
+            font-size: 16px;
+            padding: 5px 10px;
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="splash">
+        <div class="euro">€</div>
+    </div>
+
+    <div id="main">
+        <h1 id="title">Valutaátváltó – Schweizerhof Hotel St. Moritz</h1>
+        <input type="text" id="rate" placeholder="Árfolyam (pl. 0.91)">
+        <br>
+        <input type="text" id="amount" placeholder="Összeg (pl. 100)">
+        <br>
+        <button id="btn1" onclick="convert('XtoCHF')">X → CHF</button>
+        <button id="btn2" onclick="convert('CHFtoX')">CHF → X</button>
+        <div class="result-box" id="result">Eredmény: –</div>
+
+        <div class="lang-buttons">
+            <button onclick="setLang('hu')">🇭🇺 HU</button>
+            <button onclick="setLang('en')">🇬🇧 EN</button>
+            <button onclick="setLang('de')">🇩🇪 DE</button>
+            <button onclick="setLang('it')">🇮🇹 IT</button>
+            <button onclick="setLang('rm')">🇨🇭 RM</button>
+        </div>
+
+        <footer>Powered by Attila – Flagello di Dio</footer>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById("splash").style.display = "none";
+            document.getElementById("main").style.display = "block";
+            setLang(currentLang);
+        }, 1200);
+
+        
+        const texts = {
+            hu: {
+                title: "Valutaátváltó – Schweizerhof Hotel St. Moritz",
+                rate: "Árfolyam (pl. 0.91)",
+                amount: "Összeg (pl. 100)",
+                btn1: "valuta = mennyi CHF",
+                btn2: "CHF = mennyi valuta",
+                result: "Eredmény: "
+            },
+            en: {
+                title: "Currency Converter – Schweizerhof Hotel St. Moritz",
+                rate: "Rate (e.g. 0.91)",
+                amount: "Amount (e.g. 100)",
+                btn1: "currency = how many CHF",
+                btn2: "CHF = how many currency",
+                result: "Result: "
+            },
+            de: {
+                title: "Währungsrechner – Schweizerhof Hotel St. Moritz",
+                rate: "Wechselkurs (z. B. 0.91)",
+                amount: "Betrag (z. B. 100)",
+                btn1: "Währung = wie viel CHF",
+                btn2: "CHF = wie viel Währung",
+                result: "Ergebnis: "
+            },
+            it: {
+                title: "Convertitore di valuta – Schweizerhof Hotel St. Moritz",
+                rate: "Tasso di cambio (es. 0.91)",
+                amount: "Importo (es. 100)",
+                btn1: "valuta = quanti CHF",
+                btn2: "CHF = quanta valuta",
+                result: "Risultato: "
+            },
+            rm: {
+                title: "Convertider da valuta – Schweizerhof Hotel St. Moritz",
+                rate: "Curs da midada (p.ex. 0.91)",
+                amount: "Import (p.ex. 100)",
+                btn1: "valuta = tgei blers CHF",
+                btn2: "CHF = tgei blera valuta",
+                result: "Resultat: "
+            }
+        };
+
+
+        let currentLang = "hu";
+
+        function setLang(lang) {
+            currentLang = lang;
+            const t = texts[lang];
+            document.getElementById("title").innerText = t.title;
+            document.getElementById("rate").placeholder = t.rate;
+            document.getElementById("amount").placeholder = t.amount;
+            document.getElementById("btn1").innerText = t.btn1;
+            document.getElementById("btn2").innerText = t.btn2;
+            document.getElementById("result").innerText = t.result + "–";
+        }
+
+        function parseInput(value) {
+            if (value.startsWith(".")) {
+                return parseFloat("0" + value);
+            }
+            return parseFloat(value);
+        }
+
+        function convert(direction) {
+            let rate = parseInput(document.getElementById("rate").value);
+            let amount = parseInput(document.getElementById("amount").value);
+            let result = "–";
+
+            if (!isNaN(rate) && !isNaN(amount)) {
+                result = direction === 'CHFtoX'
+                    ? (amount / rate).toFixed(2)
+                    : (amount * rate).toFixed(2);
+            }
+
+            document.getElementById("result").innerText = texts[currentLang].result + result;
+        }
+    </script>
+</body>
+</html>
