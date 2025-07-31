@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Währungsrechner</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #0c0f1f;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #1a1f36;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 40px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: none;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 20px;
+            border: 2px solid #007bff;
+            padding: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            border-radius: 4px;
+        }
+
+        .language-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .language-buttons button {
+            background-color: #ccc;
+            color: #000;
+            border: none;
+            margin: 5px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="title">Währungsrechner</h1>
+    <input type="text" id="rate" placeholder="Wechselkurs (z. B. 0.91)">
+    <input type="text" id="amount" placeholder="Betrag (z. B. 100)">
+    <button onclick="convertToCHF()" id="btnToChf">Währung = wie viel CHF</button>
+    <button onclick="convertToCurrency()" id="btnToCurr">CHF = wie viel Währung</button>
+    <div id="result" class="result">Ergebnis: –</div>
+
+    <div class="language-buttons">
+        <button onclick="setLang('hu')">🇭🇺 HU</button>
+        <button onclick="setLang('en')">🇬🇧 EN</button>
+        <button onclick="setLang('de')">🇩🇪 DE</button>
+        <button onclick="setLang('it')">🇮🇹 IT</button>
+    </div>
+</div>
+
+<footer>
+    Powered by – Flagello di Dio
+</footer>
+
+<script>
+    const translations = {
+        hu: {
+            title: "Valutaátváltó",
+            ratePlaceholder: "Árfolyam (pl. 0.91)",
+            amountPlaceholder: "Összeg (pl. 100)",
+            btnToChf: "valuta = mennyi CHF",
+            btnToCurr: "CHF = mennyi valuta",
+            result: "Eredmény: –",
+            invalid: "Érvénytelen érték!"
+        },
+        en: {
+            title: "Currency Converter",
+            ratePlaceholder: "Rate (e.g. 0.91)",
+            amountPlaceholder: "Amount (e.g. 100)",
+            btnToChf: "Currency = how much CHF",
+            btnToCurr: "CHF = how much currency",
+            result: "Result: –",
+            invalid: "Invalid value!"
+        },
+        de: {
+            title: "Währungsrechner",
+            ratePlaceholder: "Wechselkurs (z. B. 0.91)",
+            amountPlaceholder: "Betrag (z. B. 100)",
+            btnToChf: "Währung = wie viel CHF",
+            btnToCurr: "CHF = wie viel Währung",
+            result: "Ergebnis: –",
+            invalid: "Ungültiger Wert!"
+        },
+        it: {
+            title: "Convertitore di Valuta",
+            ratePlaceholder: "Tasso di cambio (es. 0.91)",
+            amountPlaceholder: "Importo (es. 100)",
+            btnToChf: "valuta = quanti CHF",
+            btnToCurr: "CHF = quanta valuta",
+            result: "Risultato: –",
+            invalid: "Valore non valido!"
+        }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const langMap = { hu: 'hu', en: 'en', de: 'de', it: 'it' };
+        const browserLang = (navigator.language || navigator.userLanguage || "de").slice(0, 2).toLowerCase();
+        const chosenLang = langMap[browserLang] || "de";
+        setLang(chosenLang);
+    });
+
+    function setLang(lang) {
+        const t = translations[lang];
+        document.getElementById("title").innerText = t.title;
+        document.getElementById("rate").placeholder = t.ratePlaceholder;
+        document.getElementById("amount").placeholder = t.amountPlaceholder;
+        document.getElementById("btnToChf").innerText = t.btnToChf;
+        document.getElementById("btnToCurr").innerText = t.btnToCurr;
+        document.getElementById("result").innerText = t.result;
+        currentInvalidMsg = t.invalid;
+    }
+
+    let currentInvalidMsg = translations["de"].invalid;
+
+    function convertToCHF() {
+        var rate = parseFloat(document.getElementById("rate").value);
+        var amount = parseFloat(document.getElementById("amount").value);
+        if (!isNaN(rate) && !isNaN(amount)) {
+            document.getElementById("result").innerText = document.getElementById("btnToChf").innerText.split("=")[0].trim() + " = " + (amount * rate).toFixed(2) + " CHF";
+        } else {
+            document.getElementById("result").innerText = currentInvalidMsg;
+        }
+    }
+
+    function convertToCurrency() {
+        var rate = parseFloat(document.getElementById("rate").value);
+        var amount = parseFloat(document.getElementById("amount").value);
+        if (!isNaN(rate) && !isNaN(amount) && rate !== 0) {
+            document.getElementById("result").innerText = document.getElementById("btnToCurr").innerText.split("=")[0].trim() + " = " + (amount / rate).toFixed(2);
+        } else {
+            document.getElementById("result").innerText = currentInvalidMsg;
+        }
+    }
+
+    function fixLiveFormat(id) {
+        const input = document.getElementById(id);
+        input.addEventListener('input', () => {
+            if (input.value.match(/^\.[0-9]*$/)) {
+                input.value = "0" + input.value;
+            }
+        });
+    }
+
+    fixLiveFormat("rate");
+    fixLiveFormat("amount");
+</script>
+
+</body>
+</html>
